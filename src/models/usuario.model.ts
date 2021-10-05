@@ -1,4 +1,4 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
 import {Rol} from './rol.model';
 import {UsuarioRol} from './usuario-rol.model';
 
@@ -40,6 +40,12 @@ export class Usuario extends Entity {
     required: true,
   })
   correo: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  clave?: string;
 
   @property({
     type: 'string',
