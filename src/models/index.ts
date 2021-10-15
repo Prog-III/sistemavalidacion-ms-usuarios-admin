@@ -5,3 +5,4 @@ export * from './permiso-rol.model';
 export * from './usuario-rol.model';
 export * from './credenciales.model';
 export * from './cambio-clave.model';
+export * from './notificacion-correo.model';

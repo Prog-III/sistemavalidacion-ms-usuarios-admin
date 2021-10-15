@@ -12,16 +12,19 @@ import {
   getModelSchemaRef, param, patch, post, put, requestBody,
   response
 } from '@loopback/rest';
-import {CambioClave, Credenciales, Usuario} from '../models';
+import {Configuracion} from '../llaves/configuracion';
+import {CambioClave, Credenciales, NotificacionCorreo, Usuario} from '../models';
 import {UsuarioRepository} from '../repositories';
-import {AdministradorClavesService} from '../services';
+import {AdministradorClavesService, NotificacionesService} from '../services';
 
 export class UsuarioController {
   constructor(
     @repository(UsuarioRepository)
     public usuarioRepository: UsuarioRepository,
     @service(AdministradorClavesService)
-    public servicioClaves: AdministradorClavesService
+    public servicioClaves: AdministradorClavesService,
+    @service(NotificacionesService)
+    public servicioNotificaciones: NotificacionesService
   ) { }
 
   @post('/usuarios')
@@ -48,7 +51,11 @@ export class UsuarioController {
     usuario.clave = claveCifrada
     let usuarioCreado = await this.usuarioRepository.create(usuario);
     if (usuarioCreado) {
-      // Enviar clave por correo electrónico
+      let datos = new NotificacionCorreo();
+      datos.destinatario = usuario.correo;
+      datos.asunto = Configuracion.asuntoCreacionUsuario;
+      datos.mensaje = `${Configuracion.saludo} ${usuario.nombres} <br />${Configuracion.mensajeCreacionUsuario} ${clave}`
+      this.servicioNotificaciones.EnviarCorreo(datos)
     }
     return usuarioCreado;
   }
@@ -201,11 +208,15 @@ export class UsuarioController {
     })
     credencialesClave: CambioClave,
   ): Promise<Boolean | null> {
-    let respuesta = await this.servicioClaves.CambiarClave(credencialesClave);
-    if (respuesta) {
-      // Invocar al servicio de notificaciones para enviar correo al usuario
+    let usuario = await this.servicioClaves.CambiarClave(credencialesClave);
+    if (usuario) {
+      let datos = new NotificacionCorreo();
+      datos.destinatario = usuario.correo;
+      datos.asunto = Configuracion.asuntoCambioClave;
+      datos.mensaje = `${Configuracion.saludo} ${usuario.nombres} <br />${Configuracion.mensajeCambioClave}`
+      this.servicioNotificaciones.EnviarCorreo(datos)
     }
-    return respuesta;
+    return usuario != null;
   }
 
   @post('/recuperar-clave')
