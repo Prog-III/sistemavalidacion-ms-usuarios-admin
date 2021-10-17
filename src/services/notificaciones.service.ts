@@ -13,7 +13,7 @@ export class NotificacionesService {
    */
 
   EnviarCorreo(datos: NotificacionCorreo) {
-    let url = `${Configuracion.urlCorreo}?${Configuracion.destinoArg}=${datos.destinatario}&${Configuracion.asuntoArg}=${datos.asunto}&${Configuracion.mensajeArg}=${datos.mensaje}&${Configuracion.hashArg}=${Configuracion.hasNotificacion}`;
+    let url = `${Configuracion.urlCorreo}?${Configuracion.destinoArg}=${datos.destinatario}&${Configuracion.asuntoArg}=${datos.asunto}&${Configuracion.saludoArg}=${datos.saludo}&${Configuracion.mensajeArg}=${datos.mensaje}&${Configuracion.hashArg}=${Configuracion.hasNotificacion}`;
     fetch(url)
       .then((res: any) => {
         console.log(res.text())

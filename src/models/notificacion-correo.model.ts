@@ -18,6 +18,12 @@ export class NotificacionCorreo extends Model {
     type: 'string',
     required: true,
   })
+  saludo: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
   mensaje: string;
 
 

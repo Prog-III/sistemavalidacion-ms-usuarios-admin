@@ -10,6 +10,7 @@ export namespace Configuracion {
   export const saludo = "Hola"
   export const destinoArg = "destino"
   export const asuntoArg = "asunto"
+  export const saludoArg = "saludo"
   export const mensajeArg = "mensaje"
   export const hashArg = "hash"
 }
