@@ -55,8 +55,8 @@ export class UsuarioController {
       let datos = new NotificacionCorreo();
       datos.destinatario = usuario.correo;
       datos.asunto = Configuracion.asuntoCreacionUsuario;
-      datos.saludo = `${Configuracion.saludo} ${usuario.nombres}`
-      datos.mensaje = `${Configuracion.mensajeCreacionUsuario} ${clave}`
+      datos.saludo = `${Configuracion.saludo} <strong> ${usuario.nombres} </ strong>`
+      datos.mensaje = `${Configuracion.mensajeCreacionUsuario} <strong> ${clave} </ strong>`
       this.servicioNotificaciones.EnviarCorreo(datos)
     }
     return usuarioCreado;
