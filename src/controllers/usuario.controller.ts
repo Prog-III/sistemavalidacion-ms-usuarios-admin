@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {service} from '@loopback/core';
 import {
   Count,
@@ -208,6 +209,7 @@ export class UsuarioController {
     throw new HttpErrors[401]("Usuario o clave incorrecta");
   }
 
+  @authenticate('basic')
   @post('/cambiar-clave')
   @response(200, {
     description: 'Cambio de clave de usuarios',
@@ -217,9 +219,9 @@ export class UsuarioController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(CambioClave, {
-            title: 'Cambio de clave del Usuario'
-          }),
+          schema: {
+            type: 'object'
+          },
         },
       },
     })

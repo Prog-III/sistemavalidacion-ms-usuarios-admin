@@ -23,4 +23,14 @@ export class JwtService {
       }
     }, ConfiguracionJWT.llaveSecretaJWT)
   }
+
+  /**
+   * Método para desencriptar y verificar que
+   * un token este valido
+   */
+  VerificarTokenJWT(token: string): object {
+    const tokenDecodificado = jwt.verify(token, ConfiguracionJWT.llaveSecretaJWT);
+
+    return tokenDecodificado;
+  }
 }
