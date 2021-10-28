@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {service} from '@loopback/core';
 import {
   Count,
@@ -9,7 +10,7 @@ import {
 } from '@loopback/repository';
 import {
   del, get,
-  getModelSchemaRef, param, patch, post, put, requestBody,
+  getModelSchemaRef, HttpErrors, param, patch, post, put, requestBody,
   response
 } from '@loopback/rest';
 import {Configuracion} from '../llaves/configuracion';
@@ -17,6 +18,7 @@ import {CambioClave, Credenciales, CredencialesRecuperarClave, NotificacionCorre
 import {NotificacionSms} from '../models/notificacion-sms.model';
 import {UsuarioRepository} from '../repositories';
 import {AdministradorClavesService, NotificacionesService} from '../services';
+import {JwtService} from '../services/jwt.service';
 
 export class UsuarioController {
   constructor(
@@ -25,7 +27,9 @@ export class UsuarioController {
     @service(AdministradorClavesService)
     public servicioClaves: AdministradorClavesService,
     @service(NotificacionesService)
-    public servicioNotificaciones: NotificacionesService
+    public servicioNotificaciones: NotificacionesService,
+    @service(JwtService)
+    public servicioJWT: JwtService
   ) { }
 
   @post('/usuarios')
@@ -167,7 +171,17 @@ export class UsuarioController {
   @post('/identificar-usuario')
   @response(200, {
     description: 'Identificacion de usuarios',
-    content: {'application/json': {schema: getModelSchemaRef(Credenciales)}},
+    content: {
+      'application/json': {
+        schema: {
+          title: 'JsonWebToken response',
+          type: 'object',
+          properties: {
+            token: {type: 'string'}
+          }
+        }
+      }
+    },
   })
   async identificarUsuario(
     @requestBody({
@@ -180,19 +194,22 @@ export class UsuarioController {
       },
     })
     credenciales: Credenciales,
-  ): Promise<object | null> {
-    let usuario = await this.usuarioRepository.findOne({
+  ): Promise<object> {
+    const usuario = await this.usuarioRepository.findOne({
       where: {
         correo: credenciales.usuario,
         clave: credenciales.clave
       }
-    })
-    if (usuario) {
-      // generar token y agregarlo a la respuesta
-    }
-    return usuario
+    });
+
+    if (usuario) return {
+      token: this.servicioJWT.CrearTokenJWT(usuario)
+    };
+
+    throw new HttpErrors[401]("Usuario o clave incorrecta");
   }
 
+  @authenticate('basic')
   @post('/cambiar-clave')
   @response(200, {
     description: 'Cambio de clave de usuarios',
@@ -202,9 +219,9 @@ export class UsuarioController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(CambioClave, {
-            title: 'Cambio de clave del Usuario'
-          }),
+          schema: {
+            type: 'object'
+          },
         },
       },
     })
