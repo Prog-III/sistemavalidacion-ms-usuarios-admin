@@ -8,3 +8,5 @@ export * from './cambio-clave.model';
 export * from './notificacion-correo.model';
 export * from './credenciales-recuperar-clave.model';
 export * from './notificacion-sms.model';
+export * from './perfil-usuario.model';
+export * from './token.model';

@@ -4,18 +4,12 @@ import {
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {Rol} from '../models';
 import {RolRepository} from '../repositories';
@@ -23,8 +17,8 @@ import {RolRepository} from '../repositories';
 export class RolController {
   constructor(
     @repository(RolRepository)
-    public rolRepository : RolRepository,
-  ) {}
+    public rolRepository: RolRepository,
+  ) { }
 
   @post('/roles')
   @response(200, {

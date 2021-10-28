@@ -203,7 +203,7 @@ export class UsuarioController {
     });
 
     if (usuario) return {
-      token: this.servicioJWT.CrearTokenJWT(usuario)
+      token: await this.servicioJWT.CrearTokenJWT(usuario)
     };
 
     throw new HttpErrors[401]("Usuario o clave incorrecta");
