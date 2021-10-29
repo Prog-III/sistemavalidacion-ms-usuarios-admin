@@ -1,9 +1,8 @@
-import {inject, Getter} from '@loopback/core';
-import {DefaultCrudRepository, repository, HasManyThroughRepositoryFactory} from '@loopback/repository';
+import {inject} from '@loopback/core';
+import {DefaultCrudRepository} from '@loopback/repository';
 import {MongodbDataSource} from '../datasources';
-import {Rol, RolRelations, Permiso, PermisoRol} from '../models';
-import {PermisoRolRepository} from './permiso-rol.repository';
-import {PermisoRepository} from './permiso.repository';
+import {Rol, RolRelations} from '../models';
+
 
 export class RolRepository extends DefaultCrudRepository<
   Rol,
@@ -11,16 +10,9 @@ export class RolRepository extends DefaultCrudRepository<
   RolRelations
 > {
 
-  public readonly tiene_permisos: HasManyThroughRepositoryFactory<Permiso, typeof Permiso.prototype._id,
-          PermisoRol,
-          typeof Rol.prototype._id
-        >;
-
   constructor(
-    @inject('datasources.mongodb') dataSource: MongodbDataSource, @repository.getter('PermisoRolRepository') protected permisoRolRepositoryGetter: Getter<PermisoRolRepository>, @repository.getter('PermisoRepository') protected permisoRepositoryGetter: Getter<PermisoRepository>,
+    @inject('datasources.mongodb') dataSource: MongodbDataSource
   ) {
     super(Rol, dataSource);
-    this.tiene_permisos = this.createHasManyThroughRepositoryFactoryFor('tiene_permisos', permisoRepositoryGetter, permisoRolRepositoryGetter,);
-    this.registerInclusionResolver('tiene_permisos', this.tiene_permisos.inclusionResolver);
   }
 }
