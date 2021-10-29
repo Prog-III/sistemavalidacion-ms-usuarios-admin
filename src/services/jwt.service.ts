@@ -1,5 +1,6 @@
 import { /* inject, */ BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
+import {HttpErrors} from '@loopback/rest';
 import {ConfiguracionJWT} from '../llaves/jsonwebtoken';
 import {Token} from '../models/token.model';
 import {Usuario} from '../models/usuario.model';
@@ -33,11 +34,29 @@ export class JwtService {
   }
 
   /**
+   * Método para crear un token temporal de un solo uso
+   */
+  async CrearTokenTemporalJWT() {
+    return jwt.sign({
+      exp: (Date.now() / 1000) + 2,
+      data: {
+        activedAt: Date.now()
+      }
+    })
+  }
+
+  /**
    * Método para desencriptar y verificar que
    * un token este valido
    */
   VerificarTokenJWT(token: string): Token {
-    const tokenDecodificado = jwt.verify(token, ConfiguracionJWT.llaveSecretaJWT);
+    const tokenDecodificado = jwt.verify(token, ConfiguracionJWT.llaveSecretaJWT, (err: any, decoded: Token) => {
+      if (err) {
+        throw new HttpErrors[401](err);
+      }
+
+      return decoded;
+    });
 
     return tokenDecodificado;
   }

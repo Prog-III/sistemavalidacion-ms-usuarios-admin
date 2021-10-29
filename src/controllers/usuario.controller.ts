@@ -33,6 +33,7 @@ export class UsuarioController {
     public servicioJWT: JwtService
   ) { }
 
+  @authenticate('admin', 'temporal')
   @post('/usuarios')
   @response(200, {
     description: 'Usuario model instance',

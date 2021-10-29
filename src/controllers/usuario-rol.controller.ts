@@ -16,7 +16,7 @@ import {
 import {ArregloGeneral} from '../models/arreglo-general';
 import {UsuarioRepository, UsuarioRolRepository} from '../repositories';
 
-@authenticate.apply('admin')
+@authenticate('admin')
 export class UsuarioRolController {
   constructor(
     @repository(UsuarioRepository) protected usuarioRepository: UsuarioRepository,
@@ -66,6 +66,7 @@ export class UsuarioRolController {
     return registro;
   }
 
+  @authenticate('admin', 'temporal')
   @post('/asociar-usuario-roles/{id}', {
     responses: {
       '200': {

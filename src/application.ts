@@ -12,6 +12,7 @@ import path from 'path';
 import {MySequence} from './sequence';
 import {AdminStrategy} from './strategies/admin.strategy';
 import {BasicoStrategy} from './strategies/basico.strategy';
+import {TemporalStrategy} from './strategies/temporal.strategy';
 
 export {ApplicationConfig};
 
@@ -45,7 +46,8 @@ export class App extends BootMixin(
     };
 
     registerAuthenticationStrategy(this, BasicoStrategy);
-    registerAuthenticationStrategy(this, AdminStrategy)
+    registerAuthenticationStrategy(this, AdminStrategy);
+    registerAuthenticationStrategy(this, TemporalStrategy);
     this.component(AuthenticationComponent);
   }
 }
