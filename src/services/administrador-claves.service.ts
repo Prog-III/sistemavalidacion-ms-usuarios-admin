@@ -7,7 +7,9 @@ const CryptoJS = require("crypto-js");
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class AdministradorClavesService {
-  constructor(@repository(UsuarioRepository) public usuarioRepository: UsuarioRepository) { }
+  constructor(
+    @repository(UsuarioRepository) public usuarioRepository: UsuarioRepository,
+  ) { }
 
   /*
    * Add service methods here
@@ -20,7 +22,7 @@ export class AdministradorClavesService {
       }
     })
     if (usuario) {
-      usuario.clave = credencialesClave.nueva_clave
+      usuario.clave = this.CifrarTexto(credencialesClave.nueva_clave);
       await this.usuarioRepository.updateById(credencialesClave.id_usuario, usuario)
       return usuario
     } else {
