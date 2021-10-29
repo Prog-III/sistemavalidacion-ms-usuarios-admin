@@ -20,6 +20,10 @@ export class BasicoStrategy implements AuthenticationStrategy {
     const infoUsuario = this.servicioJWT.VerificarTokenJWT(token);
     if (!infoUsuario) throw new HttpErrors[401]("El token es invalido");
 
+    const {estado, roles} = infoUsuario.data;
+    if (!estado) throw new HttpErrors[401]("El usuario no está habilitado en el sistema");
+    if (!roles || roles.length === 0) throw new HttpErrors[401]("El usuario no tiene los permisos necesarios para realizar la operacion");
+
     return Object.assign(infoUsuario);
   }
 }
