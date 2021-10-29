@@ -20,6 +20,7 @@ import {UsuarioRepository} from '../repositories';
 import {AdministradorClavesService, NotificacionesService} from '../services';
 import {JwtService} from '../services/jwt.service';
 
+@authenticate('admin')
 export class UsuarioController {
   constructor(
     @repository(UsuarioRepository)
@@ -168,6 +169,7 @@ export class UsuarioController {
   }
 
   /** Metodos adicionales */
+  @authenticate.skip()
   @post('/identificar-usuario')
   @response(200, {
     description: 'Identificacion de usuarios',
@@ -239,6 +241,7 @@ export class UsuarioController {
     return usuario != null;
   }
 
+  @authenticate.skip()
   @post('/recuperar-clave')
   @response(200, {
     description: 'Recuperar clave de usuarios',

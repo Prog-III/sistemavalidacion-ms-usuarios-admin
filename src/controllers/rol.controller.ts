@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -14,6 +15,7 @@ import {
 import {Rol} from '../models';
 import {RolRepository} from '../repositories';
 
+@authenticate('admin')
 export class RolController {
   constructor(
     @repository(RolRepository)
@@ -89,6 +91,7 @@ export class RolController {
     return this.rolRepository.updateAll(rol, where);
   }
 
+  @authenticate('basic')
   @get('/roles/{id}')
   @response(200, {
     description: 'Rol model instance',

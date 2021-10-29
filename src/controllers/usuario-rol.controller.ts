@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Filter,
   repository
@@ -15,6 +16,7 @@ import {
 import {ArregloGeneral} from '../models/arreglo-general';
 import {UsuarioRepository, UsuarioRolRepository} from '../repositories';
 
+@authenticate.apply('admin')
 export class UsuarioRolController {
   constructor(
     @repository(UsuarioRepository) protected usuarioRepository: UsuarioRepository,
