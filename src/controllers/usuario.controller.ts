@@ -265,14 +265,15 @@ export class UsuarioController {
     })
     if (usuario) {
       let clave = this.servicioClaves.CrearClaveAleatoria()
-      console.log(clave);
-      let claveCifrada = this.servicioClaves.CifrarTexto(clave)
-      usuario.clave = this.servicioClaves.CifrarTexto(clave)
+      usuario.clave = this.servicioClaves.CifrarTexto(clave);
       await this.usuarioRepository.updateById(usuario._id, usuario)
-      let datos = new NotificacionSms();
-      datos.destino = usuario.celular;
-      datos.mensaje = `${Configuracion.saludo} ${usuario.nombres} ${Configuracion.mensajeRecuperarClave} ${clave}`
-      this.servicioNotificaciones.EnviarSms(datos)
+
+      if (usuario.celular) {
+        let datos = new NotificacionSms();
+        datos.destino = usuario.celular;
+        datos.mensaje = `${Configuracion.saludo} ${usuario.nombres} ${Configuracion.mensajeRecuperarClave} ${clave}`
+        this.servicioNotificaciones.EnviarSms(datos)
+      }
     }
     return usuario;
   }
