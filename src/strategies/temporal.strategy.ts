@@ -21,6 +21,8 @@ export class TemporalStrategy implements AuthenticationStrategy {
     const infoToken = this.servicioJWT.VerificarTokenJWT(token);
     if (!infoToken) throw new HttpErrors[401]("El token es inválido");
 
+    if (infoToken.data.temporal === undefined) throw new HttpErrors[401]("La clase de Token no es válida para la solicitud");
+
     return Object.assign(infoToken);
   }
 }

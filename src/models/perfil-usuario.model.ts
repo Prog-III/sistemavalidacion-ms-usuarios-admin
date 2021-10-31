@@ -28,6 +28,11 @@ export class PerfilUsuario extends Model {
   })
   estado: boolean;
 
+  @property({
+    type: 'boolean'
+  })
+  temporal?: boolean;
+
   constructor(data?: Partial<PerfilUsuario>) {
     super(data);
   }

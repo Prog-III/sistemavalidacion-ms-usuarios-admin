@@ -38,11 +38,11 @@ export class JwtService {
    */
   async CrearTokenTemporalJWT() {
     return jwt.sign({
-      exp: (Date.now() / 1000) + 2,
+      exp: (Date.now() / 1000) + 120,
       data: {
-        activedAt: Date.now()
+        temporal: true
       }
-    })
+    }, ConfiguracionJWT.llaveSecretaJWT)
   }
 
   /**

@@ -54,6 +54,7 @@ export class RolController {
     return this.rolRepository.count(where);
   }
 
+  @authenticate('admin', 'temporal')
   @get('/roles')
   @response(200, {
     description: 'Array of Rol model instances',
