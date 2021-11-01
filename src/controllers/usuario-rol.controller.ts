@@ -79,7 +79,7 @@ export class UsuarioRolController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(ArregloGeneral, {}),
+          schema: getModelSchemaRef(ArregloGeneral),
         },
       },
     }) datos: ArregloGeneral,

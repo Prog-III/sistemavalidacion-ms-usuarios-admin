@@ -4,18 +4,16 @@
 
 import {service} from '@loopback/core';
 import {getModelSchemaRef, HttpErrors, param, post, requestBody, response} from '@loopback/rest';
+import {MD5} from 'crypto-js';
 import {ConfiguracionJWT} from '../llaves/jsonwebtoken';
 import {Token} from '../models/token.model';
-import {AdministradorClavesService} from '../services/administrador-claves.service';
 import {JwtService} from '../services/jwt.service';
 
 
 export class TokenController {
   constructor(
     @service(JwtService)
-    private servicioJWT: JwtService,
-    @service(AdministradorClavesService)
-    private servicioClaves: AdministradorClavesService
+    private servicioJWT: JwtService
   ) { }
 
   @post('/verificar-token')
@@ -66,8 +64,7 @@ export class TokenController {
   async crearTokenTemporal(
     @param.header.string('x-jwt-secret-key') llaveSecretaToken: string
   ) {
-
-    if (this.servicioClaves.DescifrarTexto(llaveSecretaToken) !== ConfiguracionJWT.llaveSecretaJWT) {
+    if (llaveSecretaToken !== MD5(ConfiguracionJWT.llaveSecretaJWT).toString()) {
       throw new HttpErrors[401]("El cliente no está autorizado para realizar esta petición");
     }
 
