@@ -13,4 +13,6 @@ export namespace Configuracion {
   export const saludoArg = "saludo"
   export const mensajeArg = "mensaje"
   export const hashArg = "hash"
+
+  export const claveEncriptacion = 'K=E7f9*#T,G8X+Okw4zsL3w;JWheRn';
 }

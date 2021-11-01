@@ -1,13 +1,17 @@
-import { /* inject, */ BindingScope, injectable} from '@loopback/core';
+import {BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
+import {AES, enc, MD5} from 'crypto-js';
+import {Configuracion} from '../llaves/configuracion';
 import {CambioClave, Usuario} from '../models';
 import {UsuarioRepository} from '../repositories';
 const generator = require('generate-password');
-const CryptoJS = require("crypto-js");
+
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class AdministradorClavesService {
-  constructor(@repository(UsuarioRepository) public usuarioRepository: UsuarioRepository) { }
+  constructor(
+    @repository(UsuarioRepository) public usuarioRepository: UsuarioRepository,
+  ) { }
 
   /*
    * Add service methods here
@@ -20,7 +24,7 @@ export class AdministradorClavesService {
       }
     })
     if (usuario) {
-      usuario.clave = credencialesClave.nueva_clave
+      usuario.clave = this.CifrarTexto(credencialesClave.nueva_clave);
       await this.usuarioRepository.updateById(credencialesClave.id_usuario, usuario)
       return usuario
     } else {
@@ -37,8 +41,11 @@ export class AdministradorClavesService {
     return password;
   }
 
-  CifrarTexto(texto: string) {
-    let textoCifrado = CryptoJS.MD5(texto).toString();
-    return textoCifrado;
+  CifrarTexto(texto: string): string {
+    return MD5(texto).toString();
+  }
+
+  DescifrarTexto(textoCifrado: string): string {
+    return AES.decrypt(textoCifrado, Configuracion.claveEncriptacion).toString(enc.Utf8);
   }
 }
