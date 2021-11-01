@@ -1,5 +1,5 @@
 export namespace Configuracion {
-  export const hasNotificacion = "LU3RRjfXHvvl"
+  export const hasNotificacion = "seguridad"
   export const mensajeCambioClave = "Su contraseña ha sido actualizada correctamente. Si no ha sido usted, la puede recuperar mediante la funcionalidad del sistema con su correo electrónico"
   export const mensajeCreacionUsuario = "Se ha registrado correctamente en el sistema de validación, su correo servirá como usuario y su contraseña es: "
   export const mensajeRecuperarClave = "Su nueva clave generada para el sistema es: "
