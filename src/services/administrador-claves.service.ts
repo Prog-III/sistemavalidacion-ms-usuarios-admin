@@ -1,9 +1,11 @@
-import { /* inject, */ BindingScope, injectable} from '@loopback/core';
+import {BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
+import {AES, enc} from 'crypto-js';
+import {Configuracion} from '../llaves/configuracion';
 import {CambioClave, Usuario} from '../models';
 import {UsuarioRepository} from '../repositories';
 const generator = require('generate-password');
-const CryptoJS = require("crypto-js");
+
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class AdministradorClavesService {
@@ -39,8 +41,13 @@ export class AdministradorClavesService {
     return password;
   }
 
-  CifrarTexto(texto: string) {
-    let textoCifrado = CryptoJS.MD5(texto).toString();
-    return textoCifrado;
+  CifrarTexto(texto: string): string {
+    return AES.encrypt(texto, Configuracion.claveEncriptacion).toString();
+  }
+
+  DescifrarTexto(textoCifrado: string): string {
+    const textoDescifrado = AES.decrypt(textoCifrado, Configuracion.claveEncriptacion);
+
+    return textoDescifrado.toString(enc.Utf8);
   }
 }

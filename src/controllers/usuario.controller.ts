@@ -53,9 +53,8 @@ export class UsuarioController {
     usuario: Omit<Usuario, '_id'>,
   ): Promise<Usuario> {
     let clave = this.servicioClaves.CrearClaveAleatoria();
-    console.log(clave);
-    let claveCifrada = this.servicioClaves.CifrarTexto(clave);
-    usuario.clave = claveCifrada
+    usuario.clave = this.servicioClaves.CifrarTexto(clave);
+
     let usuarioCreado = await this.usuarioRepository.create(usuario);
     if (usuarioCreado) {
       let datos = new NotificacionCorreo();
@@ -216,15 +215,17 @@ export class UsuarioController {
   @post('/cambiar-clave')
   @response(200, {
     description: 'Cambio de clave de usuarios',
-    content: {'application/json': {schema: getModelSchemaRef(CambioClave)}},
+    content: {
+      'application/json': {
+        schema: {type: 'boolean'}
+      }
+    },
   })
   async cambiarClave(
     @requestBody({
       content: {
         'application/json': {
-          schema: {
-            type: 'object'
-          },
+          schema: getModelSchemaRef(CambioClave),
         },
       },
     })

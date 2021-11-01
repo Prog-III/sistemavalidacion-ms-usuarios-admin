@@ -93,6 +93,7 @@ export class UsuarioRolController {
             id_rol: id_rol
           }
         });
+
         if (!existe) {
           this.usuarioRolRepository.create({
             id_usuario: id_usuario,
