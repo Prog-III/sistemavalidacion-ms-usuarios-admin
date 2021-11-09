@@ -67,6 +67,7 @@ export class UsuarioController {
     return usuarioCreado;
   }
 
+  @authenticate('admin', 'temporal')
   @get('/usuarios/count')
   @response(200, {
     description: 'Usuario model count',
