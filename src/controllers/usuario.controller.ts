@@ -14,8 +14,7 @@ import {
   response
 } from '@loopback/rest';
 import {Configuracion} from '../llaves/configuracion';
-import {CambioClave, Credenciales, CredencialesRecuperarClave, NotificacionCorreo, Usuario} from '../models';
-import {NotificacionSms} from '../models/notificacion-sms.model';
+import {CambioClave, Credenciales, CredencialesRecuperarClave, NotificacionCorreo, NotificacionSms, Usuario} from '../models';
 import {UsuarioRepository} from '../repositories';
 import {AdministradorClavesService, NotificacionesService} from '../services';
 import {JwtService} from '../services/jwt.service';
@@ -262,9 +261,12 @@ export class UsuarioController {
   ): Promise<Usuario | null> {
     let usuario = await this.usuarioRepository.findOne({
       where: {
-        correo: credenciales.correo
+        correo: {
+          eq: credenciales.correo
+        }
       }
     })
+
     if (usuario) {
       let clave = this.servicioClaves.CrearClaveAleatoria()
       usuario.clave = this.servicioClaves.CifrarTexto(clave);
@@ -277,6 +279,7 @@ export class UsuarioController {
         this.servicioNotificaciones.EnviarSms(datos)
       }
     }
+
     return usuario;
   }
 }
