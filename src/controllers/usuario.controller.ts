@@ -16,9 +16,11 @@ import {
 import {Configuracion} from '../llaves/configuracion';
 import {CambioClave, Credenciales, CredencialesRecuperarClave, NotificacionCorreo, Rol, Usuario} from '../models';
 import {NotificacionSms} from '../models/notificacion-sms.model';
-import {UsuarioRepository, UsuarioRolRepository, RolRepository} from '../repositories';
+import {RolRepository, UsuarioRepository, UsuarioRolRepository} from '../repositories';
 import {AdministradorClavesService, NotificacionesService} from '../services';
 import {JwtService} from '../services/jwt.service';
+
+
 
 @authenticate('admin')
 export class UsuarioController {
@@ -209,23 +211,23 @@ export class UsuarioController {
         clave: credenciales.clave
       }
     });
-    if (usuario){
-    console.log(usuario.tiene_roles);
-    const roles= await this.usuarioRolRepository.find({
-      where: {id_usuario:usuario._id}
-    })
-    console.log(roles);
-    let rolesUsuario= new Array<Rol>();
-    roles.forEach(async role =>{
-      let rols= await this.rolRepository.findById(role.id_rol)
-      rolesUsuario.push(rols);
-    })
+    if (usuario) {
+      console.log(usuario.tiene_roles);
+      const roles = await this.usuarioRolRepository.find({
+        where: {id_usuario: usuario._id}
+      })
+      console.log(roles);
+      let rolesUsuario = new Array<Rol>();
+      roles.forEach(async role => {
+        let rols = await this.rolRepository.findById(role.id_rol)
+        rolesUsuario.push(rols);
+      })
 
-    return {
-      token: await this.servicioJWT.CrearTokenJWT(usuario),
-      roles: rolesUsuario
+      return {
+        token: await this.servicioJWT.CrearTokenJWT(usuario),
+        roles: rolesUsuario
+      }
     }
-  }
 
     throw new HttpErrors[401]("Usuario o clave incorrecta");
   }
@@ -280,9 +282,12 @@ export class UsuarioController {
   ): Promise<Usuario | null> {
     let usuario = await this.usuarioRepository.findOne({
       where: {
-        correo: credenciales.correo
+        correo: {
+          eq: credenciales.correo
+        }
       }
     })
+
     if (usuario) {
       let clave = this.servicioClaves.CrearClaveAleatoria()
       usuario.clave = this.servicioClaves.CifrarTexto(clave);
@@ -295,6 +300,7 @@ export class UsuarioController {
         this.servicioNotificaciones.EnviarSms(datos)
       }
     }
+
     return usuario;
   }
 }
