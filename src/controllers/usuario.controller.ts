@@ -14,9 +14,9 @@ import {
   response
 } from '@loopback/rest';
 import {Configuracion} from '../llaves/configuracion';
-import {CambioClave, Credenciales, CredencialesRecuperarClave, NotificacionCorreo, Usuario} from '../models';
+import {CambioClave, Credenciales, CredencialesRecuperarClave, NotificacionCorreo, Rol, Usuario} from '../models';
 import {NotificacionSms} from '../models/notificacion-sms.model';
-import {UsuarioRepository} from '../repositories';
+import {UsuarioRepository, UsuarioRolRepository, RolRepository} from '../repositories';
 import {AdministradorClavesService, NotificacionesService} from '../services';
 import {JwtService} from '../services/jwt.service';
 
@@ -30,7 +30,11 @@ export class UsuarioController {
     @service(NotificacionesService)
     public servicioNotificaciones: NotificacionesService,
     @service(JwtService)
-    public servicioJWT: JwtService
+    public servicioJWT: JwtService,
+    @repository(UsuarioRolRepository)
+    public usuarioRolRepository: UsuarioRolRepository,
+    @repository(RolRepository)
+    public rolRepository: RolRepository,
   ) { }
 
   @authenticate('admin', 'temporal')
@@ -180,7 +184,8 @@ export class UsuarioController {
           title: 'JsonWebToken response',
           type: 'object',
           properties: {
-            token: {type: 'string'}
+            token: {type: 'string'},
+            roles: {type: 'array'}
           }
         }
       }
@@ -204,10 +209,23 @@ export class UsuarioController {
         clave: credenciales.clave
       }
     });
+    if (usuario){
+    console.log(usuario.tiene_roles);
+    const roles= await this.usuarioRolRepository.find({
+      where: {id_usuario:usuario._id}
+    })
+    console.log(roles);
+    let rolesUsuario= new Array<Rol>();
+    roles.forEach(async role =>{
+      let rols= await this.rolRepository.findById(role.id_rol)
+      rolesUsuario.push(rols);
+    })
 
-    if (usuario) return {
-      token: await this.servicioJWT.CrearTokenJWT(usuario)
-    };
+    return {
+      token: await this.servicioJWT.CrearTokenJWT(usuario),
+      roles: rolesUsuario
+    }
+  }
 
     throw new HttpErrors[401]("Usuario o clave incorrecta");
   }
