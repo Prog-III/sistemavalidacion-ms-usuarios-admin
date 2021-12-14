@@ -1,7 +1,10 @@
 import {authenticate} from '@loopback/authentication';
 import {
+  Count,
+  CountSchema,
   Filter,
-  repository
+  repository,
+  Where
 } from '@loopback/repository';
 import {
   del,
@@ -22,6 +25,17 @@ export class UsuarioRolController {
     @repository(UsuarioRepository) protected usuarioRepository: UsuarioRepository,
     @repository(UsuarioRolRepository) protected usuarioRolRepository: UsuarioRolRepository
   ) { }
+
+  @get('/usuariorol/count')
+  @response(200, {
+    description: 'UsuarioRol model count',
+    content: {'application/json': {schema: CountSchema}},
+  })
+  async count(
+    @param.where(UsuarioRol) where?: Where<UsuarioRol>,
+  ): Promise<Count> {
+    return this.usuarioRolRepository.count(where);
+  }
 
   @get('/usuarios/{id}/roles', {
     responses: {
