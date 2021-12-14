@@ -23,7 +23,7 @@ export class JwtService {
     const rolesUsuario = await this.usuarioRepository.tiene_roles(_id).find();
 
     return jwt.sign({
-      exp: ConfiguracionJWT.tiempoExpiracionJWT,
+      exp: ConfiguracionJWT.generarTiempoExpiracionJWT(),
       data: {
         id: _id,
         correo,

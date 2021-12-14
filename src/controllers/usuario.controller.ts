@@ -212,11 +212,10 @@ export class UsuarioController {
       }
     });
     if (usuario) {
-      console.log(usuario.tiene_roles);
       const roles = await this.usuarioRolRepository.find({
         where: {id_usuario: usuario._id}
       })
-      console.log(roles);
+
       let rolesUsuario = new Array<Rol>();
       roles.forEach(async role => {
         let rols = await this.rolRepository.findById(role.id_rol)
