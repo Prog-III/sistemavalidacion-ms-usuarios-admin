@@ -10,3 +10,4 @@ export * from './usuario-rol.model';
 export * from './usuario.model';
 
 
+export * from './validar-token-guard.model';
