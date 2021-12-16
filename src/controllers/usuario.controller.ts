@@ -164,7 +164,13 @@ export class UsuarioController {
     @param.path.string('id') id: string,
     @requestBody() usuario: Usuario,
   ): Promise<void> {
-    await this.usuarioRepository.replaceById(id, usuario);
+
+    const usuarioExistente = await this.usuarioRepository.findById(usuario._id)
+    if (usuarioExistente) {
+      usuario.clave = usuarioExistente.clave;
+
+      await this.usuarioRepository.replaceById(id, usuario);
+    }
   }
 
   @del('/usuarios/{id}')
@@ -213,7 +219,7 @@ export class UsuarioController {
       }
     });//estado: true me valida que este activo en el sistema
     if (usuario) {
-      if(usuario.estado==false){
+      if (usuario.estado == false) {
         throw new HttpErrors[401]("Usuario NO  activo en el sistema");
       }
       const roles = await this.usuarioRolRepository.find({
