@@ -7,6 +7,11 @@ export class ValidarTokenGuard extends Model {
   })
   token?: string;
 
+  @property({
+    type: 'string',
+  })
+  correo?: string;
+
 
   constructor(data?: Partial<ValidarTokenGuard>) {
     super(data);

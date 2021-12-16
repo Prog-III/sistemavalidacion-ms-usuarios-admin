@@ -9,7 +9,9 @@ import {ConfiguracionJWT} from '../llaves/jsonwebtoken';
 import {ValidarTokenGuard} from '../models';
 import {Token} from '../models/token.model';
 import {JwtService} from '../services/jwt.service';
-const fetch= require('node-fetch');
+var net = require('net')
+var httpHeaders = require('http-headers')
+const fetch = require('node-fetch');
 
 
 export class TokenController {
@@ -76,7 +78,7 @@ export class TokenController {
 
   @post('/verificar-token-id/{id}', {
     responses: {
-      '200':{description:'Validar email', }
+      '200': {description: 'Validar email', }
     }
   })
 
@@ -84,32 +86,55 @@ export class TokenController {
     @param.path.number('id') id: number,
     @requestBody({
       content: {
-        'application/json':{schema: getModelSchemaRef(ValidarTokenGuard),}
-        ,}
-      })
-      token: ValidarTokenGuard
+        'application/json': {schema: getModelSchemaRef(ValidarTokenGuard), }
+        ,
+      }
+    })
+    token: ValidarTokenGuard
 
   ): Promise<boolean> {
     if (token.token) {
-      let info=  this.servicioJWT.VerificarTokenJWT(token.token);
-      if(info){
+      let info = this.servicioJWT.VerificarTokenJWT(token.token);
+      if (info) {
         console.log(info.data.correo);
 
-        //CONSULTAR USUARIO EN OTRO Microservici
-        let respuesta: any;
-        respuesta= await fetch(`http://localhost:3000/jurados-email/${id}`)
-// ENVIAR TOKEN EN LA SOLICITUD
-        let correo = await respuesta.text()+"";
-        if(info.data.correo == correo.toString()) {
+        // ENVIAR TOKEN EN LA SOLICITUD
+
+
+        if (info.data.correo == token.correo) {
           return true;
-        }else{
+        } else {
           return false;
         }
+      }
+
+
+      throw new HttpErrors[400]("No existe un token en la petición")
+    }
+    return false;
+  }
+  @post('/verificar-expiracion-token', {
+    responses: {
+      '200': {description: 'Validar Expiracion Token', }
+    }
+  })
+
+  async verificarExpiracionToken(
+    @requestBody({
+      content: {
+        'application/json': {schema: getModelSchemaRef(ValidarTokenGuard), }
+        ,
+      }
+    })
+    token: ValidarTokenGuard
+  ): Promise<Token> {
+    if (token.token != "" && token.token) {
+      return this.servicioJWT.VerificarTokenJWT(token.token);
+    }
+    else {
+      throw new HttpErrors[402]("No existe un token en la petición")
     }
 
 
-    throw new HttpErrors[400]("No existe un token en la petición")
   }
-  return false;
-}
 }

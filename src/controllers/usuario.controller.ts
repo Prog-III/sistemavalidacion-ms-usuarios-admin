@@ -209,9 +209,13 @@ export class UsuarioController {
       where: {
         correo: credenciales.usuario,
         clave: credenciales.clave
+
       }
-    });
+    });//estado: true me valida que este activo en el sistema
     if (usuario) {
+      if(usuario.estado==false){
+        throw new HttpErrors[401]("Usuario NO  activo en el sistema");
+      }
       const roles = await this.usuarioRolRepository.find({
         where: {id_usuario: usuario._id}
       })
